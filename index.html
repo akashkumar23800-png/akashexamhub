@@ -33,6 +33,10 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="shortcut icon" href="/favicon-32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Akash Exam Hub" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
@@ -89,6 +93,25 @@
       .site-footer a:focus-visible{outline:2px solid #fff;outline-offset:2px}
       @media(min-width:900px){.site-footer{margin-top:72px;padding:56px 0 26px}.footer-grid{grid-template-columns:minmax(240px,300px) 1fr;gap:48px;align-items:start}}
       @media(min-width:1200px){.footer-cols{grid-template-columns:repeat(5,minmax(0,1fr))}}
+      /* PWA install control */
+      .install-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;color:var(--ink);font:700 14px 'DM Sans',system-ui,sans-serif;border-radius:12px;padding:12px 16px;line-height:1;cursor:pointer;transition:border-color .15s,color .15s,background .15s}
+      .install-btn:hover{border-color:#bdc9ff;color:var(--blue)}
+      .install-btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+      .install-btn[data-install-state="available"]{border-color:var(--blue);background:#f2f5ff;color:var(--blue)}
+      .install-btn[data-install-state="installed"]{border-color:#bfe6d8;background:#f2fbf7;color:#12805e;cursor:default}
+      .install-ico{font-size:15px;line-height:1}
+      @media(max-width:520px){.install-btn{padding:10px 12px;font-size:12px}}
+      .install-modal{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:18px}
+      .install-modal[hidden]{display:none}
+      .install-backdrop{position:absolute;inset:0;background:rgba(16,26,54,.55)}
+      .install-card{position:relative;background:#fff;color:var(--ink);border-radius:20px;max-width:440px;width:100%;padding:26px;box-shadow:0 30px 80px rgba(16,26,54,.28);max-height:calc(100vh - 36px);overflow:auto}
+      .install-card h2{font:800 22px Manrope,sans-serif;margin:0 0 10px;color:var(--navy);letter-spacing:-.4px}
+      .install-card p{margin:0 0 14px;color:var(--muted);font-size:15px;line-height:1.65}
+      .install-card ol{margin:0 0 20px;padding-left:20px;color:#3d4762;font-size:14px;line-height:1.7}
+      .install-card li{margin-bottom:6px}
+      .install-actions{display:flex;gap:10px;flex-wrap:wrap}
+      .install-actions .btn{border:0;cursor:pointer;font-family:inherit;box-shadow:none}
+      body.install-open{overflow:hidden}
     </style>
     <script type="application/ld+json" id="website-schema">{"@context":"https://schema.org","@type":"WebSite","@id":"https://akashexam-hublive.netlify.app/#website","name":"Akash Exam Hub","alternateName":"Akash Exam Hub CBSE Learning","url":"https://akashexam-hublive.netlify.app/","description":"Your Complete CBSE Learning Platform for Classes 6–12. Access Study Materials, NCERT Resources, MCQ Practice, Mock Tests and AI-Powered Learning Support in Hindi & English.","inLanguage":["en","hi"],"publisher":{"@id":"https://akashexam-hublive.netlify.app/#organization"}}</script>
     <script type="application/ld+json" id="organization-schema">{"@context":"https://schema.org","@type":"Organization","@id":"https://akashexam-hublive.netlify.app/#organization","name":"Akash Exam Hub","alternateName":"Akash Exam Hub CBSE Learning","url":"https://akashexam-hublive.netlify.app/","logo":{"@type":"ImageObject","@id":"https://akashexam-hublive.netlify.app/#logo","url":"https://akashexam-hublive.netlify.app/notes-logo.png","contentUrl":"https://akashexam-hublive.netlify.app/notes-logo.png","width":272,"height":232,"caption":"Akash Exam Hub"},"image":{"@id":"https://akashexam-hublive.netlify.app/#logo"},"description":"Akash Exam Hub is a CBSE learning platform for Classes 6–12 offering study materials, NCERT resources, MCQ practice, mock tests and AI-powered learning support in Hindi and English.","brand":{"@type":"Brand","name":"Akash Exam Hub","alternateName":"Akash Exam Hub CBSE Learning"},"knowsLanguage":["en","hi"],"areaServed":{"@type":"Country","name":"India"}}</script>
@@ -96,7 +119,7 @@
   <body>
     <header class="topbar wrap">
       <a class="brand" href="/" aria-label="Akash Exam Hub home"><img src="/notes-logo.png" width="272" height="232" alt="Akash Exam Hub logo"/><span>Akash Exam Hub</span></a>
-      <nav class="nav" aria-label="Main navigation"><a class="hide-mobile" href="#classes">Classes</a><a class="hide-mobile" href="#features">Features</a><a href="/app/" class="btn">Student Login</a></nav>
+      <nav class="nav" aria-label="Main navigation"><a class="hide-mobile" href="#classes">Classes</a><a class="hide-mobile" href="#features">Features</a><button class="install-btn" type="button" id="install-app" data-install-state="idle" aria-haspopup="dialog" aria-controls="install-help"><span class="install-ico" aria-hidden="true">⤓</span><span id="install-app-label">Install</span></button><a href="/app/" class="btn">Student Login</a></nav>
     </header>
     <main>
       <section class="hero"><div class="wrap hero-grid"><div>
@@ -180,5 +203,116 @@
         </div>
       </div>
     </footer>
+    <div class="install-modal" id="install-help" role="dialog" aria-modal="true" aria-labelledby="install-help-title" hidden>
+      <div class="install-backdrop" data-install-close></div>
+      <div class="install-card">
+        <h2 id="install-help-title">Install Akash Exam Hub</h2>
+        <p id="install-help-text"></p>
+        <ol id="install-help-steps"></ol>
+        <div class="install-actions"><button class="btn" type="button" data-install-close>Got it</button></div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var btn = document.getElementById('install-app');
+        var label = document.getElementById('install-app-label');
+        var dialog = document.getElementById('install-help');
+        var titleEl = document.getElementById('install-help-title');
+        var textEl = document.getElementById('install-help-text');
+        var stepsEl = document.getElementById('install-help-steps');
+        var deferredPrompt = null;
+        var isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+        function isStandalone() {
+          var modes = ['(display-mode: standalone)', '(display-mode: fullscreen)', '(display-mode: minimal-ui)'];
+          var inMode = window.matchMedia && modes.some(function (q) { return window.matchMedia(q).matches; });
+          return Boolean(inMode) || navigator.standalone === true;
+        }
+
+        function setState(state) {
+          btn.setAttribute('data-install-state', state);
+          label.textContent = state === 'installed' ? 'Installed' : 'Install';
+        }
+
+        function openHelp(kind) {
+          var copy;
+          if (kind === 'installed') {
+            copy = {
+              title: 'Akash Exam Hub is already installed',
+              text: 'This page is running as the installed app, so there is nothing to install again. Open Akash Exam Hub any time from your home screen or app list.',
+              steps: ['Installed apps open without the browser address bar.', 'If you removed the app, add it again from your browser menu.']
+            };
+          } else if (kind === 'ios') {
+            copy = {
+              title: 'Install on iPhone or iPad',
+              text: 'Safari does not offer an automatic install prompt. Add Akash Exam Hub to your Home Screen manually:',
+              steps: ['Open this site in Safari.', 'Tap the Share button (the square with an arrow).', 'Scroll down and tap "Add to Home Screen".', 'Tap "Add" - the Akash Exam Hub icon appears on your Home Screen.']
+            };
+          } else {
+            copy = {
+              title: 'Install from your browser menu',
+              text: 'This browser has not offered an install prompt. You can still add Akash Exam Hub to your device:',
+              steps: ['Chrome or Edge on desktop: click the install icon in the address bar, or open the menu and choose "Install page as app".', 'Chrome on Android: open the menu and tap "Install app" or "Add to Home screen".', 'Safari on iPhone or iPad: use Share then "Add to Home Screen".', 'Safari or Firefox on desktop do not support installing web apps - use Chrome or Edge instead.']
+            };
+          }
+          titleEl.textContent = copy.title;
+          textEl.textContent = copy.text;
+          stepsEl.innerHTML = '';
+          copy.steps.forEach(function (step) {
+            var li = document.createElement('li');
+            li.textContent = step;
+            stepsEl.appendChild(li);
+          });
+          dialog.hidden = false;
+          document.body.classList.add('install-open');
+          var closer = dialog.querySelector('[data-install-close]');
+          if (closer) closer.focus();
+        }
+
+        function closeHelp() {
+          dialog.hidden = true;
+          document.body.classList.remove('install-open');
+          btn.focus();
+        }
+
+        window.addEventListener('beforeinstallprompt', function (event) {
+          event.preventDefault();
+          deferredPrompt = event;
+          if (!isStandalone()) setState('available');
+        });
+
+        window.addEventListener('appinstalled', function () {
+          deferredPrompt = null;
+          setState('installed');
+        });
+
+        btn.addEventListener('click', function () {
+          if (isStandalone()) { openHelp('installed'); return; }
+          if (!deferredPrompt) { openHelp(isIos ? 'ios' : 'unsupported'); return; }
+          var promptEvent = deferredPrompt;
+          deferredPrompt = null;
+          promptEvent.prompt();
+          promptEvent.userChoice.then(function (choice) {
+            setState(choice && choice.outcome === 'accepted' ? 'installed' : 'idle');
+          }).catch(function () { setState('idle'); });
+        });
+
+        dialog.addEventListener('click', function (event) {
+          if (event.target.hasAttribute('data-install-close')) closeHelp();
+        });
+
+        document.addEventListener('keydown', function (event) {
+          if (event.key === 'Escape' && !dialog.hidden) closeHelp();
+        });
+
+        if (isStandalone()) setState('installed');
+
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function () {
+            navigator.serviceWorker.register('/sw.js').catch(function () {});
+          });
+        }
+      })();
+    </script>
   </body>
 </html>
