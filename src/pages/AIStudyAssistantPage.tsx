@@ -64,6 +64,24 @@ export function AIStudyAssistantPage() {
   );
 
   useEffect(() => {
+    const resetChat = () => {
+      setActive('doubt');
+      setInput('');
+      setAnswer('');
+      setError('');
+      setNotice('');
+      setQuiz(null);
+      setSelections({});
+      setQuizSubmitted(false);
+      setHistory([]);
+      setImage(undefined);
+      setImageName('');
+    };
+    window.addEventListener('akh:new-chat', resetChat);
+    return () => window.removeEventListener('akh:new-chat', resetChat);
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
     async function loadProgress() {
       const { data, error: loadError } = await supabase
