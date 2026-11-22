@@ -1,0 +1,27 @@
+# Akash Exam Hub — Netlify redirects
+# Rules are evaluated top to bottom; the first match wins.
+# The portal and legal rules MUST stay above the catch-all, otherwise the
+# catch-all would serve the homepage instead of the student portal.
+
+# Student portal (Supabase auth view lives here)
+/app            /app.html            200
+/app/           /app.html            200
+/app/*          /app.html            200
+
+# Friendly login entry points so old /login or /auth links never 404
+/login          /app/                301
+/login/*        /app/                301
+/auth           /app/                301
+/auth/*         /app/                301
+/signin         /app/                301
+/sign-in        /app/                301
+
+# Legal pages
+/privacy        /privacy.html        200
+/terms          /terms.html          200
+
+# SPA fallback: any other path returns the homepage with a 200 instead of
+# a Netlify "Page not found". Real files (assets, /classes/*/index.html)
+# are still served first, because Netlify only applies this rewrite when no
+# static file matches.
+/*              /index.html         200

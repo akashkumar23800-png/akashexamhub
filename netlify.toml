@@ -2,8 +2,15 @@
   command = "npm run build"
   publish = "dist"
 
+# Redirects are evaluated in order; keep the catch-all last.
+
 [[redirects]]
   from = "/app"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/app/"
   to = "/app.html"
   status = 200
 
@@ -13,6 +20,36 @@
   status = 200
 
 [[redirects]]
+  from = "/login"
+  to = "/app/"
+  status = 301
+
+[[redirects]]
+  from = "/login/*"
+  to = "/app/"
+  status = 301
+
+[[redirects]]
+  from = "/auth"
+  to = "/app/"
+  status = 301
+
+[[redirects]]
+  from = "/auth/*"
+  to = "/app/"
+  status = 301
+
+[[redirects]]
+  from = "/signin"
+  to = "/app/"
+  status = 301
+
+[[redirects]]
+  from = "/sign-in"
+  to = "/app/"
+  status = 301
+
+[[redirects]]
   from = "/privacy"
   to = "/privacy.html"
   status = 200
@@ -20,6 +57,12 @@
 [[redirects]]
   from = "/terms"
   to = "/terms.html"
+  status = 200
+
+# SPA fallback so client-side paths never return Netlify's 404 page.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
   status = 200
 
 [[headers]]
