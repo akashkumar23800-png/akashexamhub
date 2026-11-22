@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { AuthContext, type AuthContextValue } from '@/contexts/auth-context';
+import { readAvatarUrl, readDisplayName } from '@/lib/profile';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -27,16 +28,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<AuthContextValue>(() => {
-    const metadata = (session?.user?.user_metadata ?? {}) as Record<string, unknown>;
-    const readString = (candidate: unknown) =>
-      typeof candidate === 'string' && candidate.trim() ? candidate.trim() : null;
-
     return {
       session,
       user: session?.user ?? null,
       loading,
-      displayName: readString(metadata.full_name) ?? readString(metadata.name),
-      avatarUrl: readString(metadata.avatar_url) ?? readString(metadata.picture),
+      displayName: readDisplayName(session?.user),
+      avatarUrl: readAvatarUrl(session?.user),
       signOut: async () => {
         const { error } = await supabase.auth.signOut();
         if (error) throw new Error(error.message);
