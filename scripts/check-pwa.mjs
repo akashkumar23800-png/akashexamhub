@@ -4,7 +4,7 @@
  * service-worker registration fails the build instead of silently shipping.
  * Run with: node scripts/check-pwa.mjs
  */
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const root = resolve(process.cwd());
@@ -72,7 +72,7 @@ if (!existsSync(swPath)) {
 } else {
   const sw = readFileSync(swPath, 'utf8');
   for (const token of ["addEventListener('install'", "addEventListener('activate'", "addEventListener('fetch'"]) {
-    if (!sw.includes(token)) fail(`sw.js is missing ${token})`);
+    if (!sw.includes(token)) fail(`sw.js is missing ${token}`);
   }
   notes.push('service worker: install, activate and fetch handlers present');
 }
@@ -100,6 +100,51 @@ if (homepage) {
   if (!homepage.includes('Add to Home Screen')) fail('homepage has no honest Add to Home Screen fallback instructions');
   if (!homepage.includes("'(display-mode: standalone)'")) fail('homepage does not detect standalone display mode');
   notes.push('homepage: Install button, prompt() call, userChoice handling and fallback copy present');
+}
+
+// 5. Clean SEO metadata: one canonical social image, topic coverage, no
+// fabricated reviews, ratings or user counts anywhere in the built HTML.
+if (homepage) {
+  const ogImages = homepage.match(/property="og:image"/g) || [];
+  if (ogImages.length !== 1) fail(`homepage declares ${ogImages.length} og:image tags (expected exactly 1)`);
+  if (!/property="og:image" content="[^"]*\/og-image\.png"/.test(homepage)) fail('homepage og:image does not use the 1200x630 og-image.png');
+  if (!homepage.includes('property="og:image:width" content="1200"') || !homepage.includes('property="og:image:height" content="630"')) {
+    fail('homepage og:image is missing its 1200x630 dimensions');
+  }
+  if (!/name="twitter:image" content="[^"]*\/og-image\.png"/.test(homepage)) fail('homepage twitter:image does not use og-image.png');
+  if (!/name="keywords"[^>]*MCQ practice[^>]*mock tests[^>]*AI Study Assistant/i.test(homepage)) {
+    fail('homepage keywords meta does not cover MCQ practice, mock tests and the AI Study Assistant');
+  }
+  if (!homepage.includes('>Install App<')) fail('homepage install button is not labelled "Install App"');
+  notes.push('seo: single 1200x630 og:image, matching twitter:image, topic keywords and "Install App" label');
+}
+
+const fabricated = [];
+function walkHtml(dir) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = resolve(dir, entry.name);
+    if (entry.isDirectory()) walkHtml(full);
+    else if (entry.name.endsWith('.html')) {
+      const html = readFileSync(full, 'utf8');
+      for (const token of ['aggregateRating', 'ratingValue', 'reviewCount', 'ratingCount']) {
+        if (html.includes(token)) fabricated.push(`${full.slice(root.length + 1)}: ${token}`);
+      }
+    }
+  }
+}
+if (existsSync(resolve(root, 'dist'))) walkHtml(resolve(root, 'dist'));
+if (fabricated.length) fail(`fabricated review/rating markup found: ${fabricated.join(', ')}`);
+else notes.push('seo: no aggregateRating/ratingValue/reviewCount/ratingCount markup in the build output');
+
+// 6. Generated catalogue pages carry the manifest so installs work from them too.
+const classPage = resolve(root, 'dist/classes/class-10/index.html');
+if (!existsSync(classPage)) {
+  fail('dist/classes/class-10/index.html is missing from the build output');
+} else {
+  const html = readFileSync(classPage, 'utf8');
+  if (!/rel="manifest"\s+href="\/manifest\.json"/.test(html)) fail('class-10 page does not link /manifest.json');
+  if (!/property="og:image" content="[^"]*\/og-image\.png"/.test(html)) fail('class-10 page og:image does not use og-image.png');
+  notes.push('catalogue: class page links the manifest and the 1200x630 social image');
 }
 
 if (failures.length) {
