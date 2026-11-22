@@ -52,6 +52,49 @@
   html[data-theme='dark'] #app-menu-drawer .bg-white {
     background: #1e293b;
   }
+
+  html[data-theme='dark'] #app-menu-drawer .bg-slate-50,
+  html[data-theme='dark'] #app-menu-drawer .bg-slate-100 {
+    background: #1e293b;
+  }
+
+  html[data-theme='dark'] #app-menu-drawer .bg-violet-50 {
+    background: #312e81;
+  }
+
+  html[data-theme='dark'] #app-menu-drawer .text-violet-700,
+  html[data-theme='dark'] #app-menu-drawer .text-violet-800 {
+    color: #c4b5fd;
+  }
+
+  html[data-theme='dark'] #signout-dialog {
+    background: #0f172a;
+    color: #e2e8f0;
+  }
+
+  html[data-theme='dark'] #signout-dialog .text-slate-900 {
+    color: #f8fafc;
+  }
+
+  html[data-theme='dark'] #signout-dialog .text-slate-600 {
+    color: #cbd5e1;
+  }
+
+  html[data-theme='dark'] #signout-dialog .border-slate-200 {
+    border-color: #334155;
+  }
+
+  html[data-theme='dark'] #signout-dialog .text-slate-700 {
+    color: #e2e8f0;
+  }
+
+  html[data-theme='dark'] #signout-dialog .bg-red-50 {
+    background: #4c0519;
+  }
+
+  html[data-theme='dark'] #signout-dialog .text-red-600 {
+    color: #fca5a5;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
