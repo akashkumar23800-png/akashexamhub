@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { Logo } from '@/components/ui/Logo';
+import { Avatar } from '@/components/ui/Avatar';
 import { ProfileMenu } from '@/components/layout/ProfileMenu';
 import { SignOutButton } from '@/components/layout/SignOutButton';
 import { navKeyFor, type NavKey, type Route } from '@/lib/routes';
@@ -54,7 +55,7 @@ const MENU_ITEMS: MenuItem[] = [
 const LANGUAGES: StudyLanguage[] = ['English', 'Hindi'];
 
 export function SiteHeader({ route }: { route: Route }) {
-  const { user, signOut } = useAuth();
+  const { user, displayName, avatarUrl, signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState<StudyLanguage>(() => getStudyLanguage());
@@ -195,7 +196,17 @@ export function SiteHeader({ route }: { route: Route }) {
               </button>
             </div>
 
-            <nav className="mt-5 flex-1 overflow-y-auto" aria-label="Tools and navigation">
+            {user && (
+              <div className="mt-5 flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-3">
+                <Avatar name={displayName || 'Student'} src={avatarUrl} size="md" />
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-bold text-slate-900">{displayName || 'Student'}</p>
+                  <p className="truncate text-xs text-slate-500">{user.email}</p>
+                </div>
+              </div>
+            )}
+
+            <nav className="mt-4 flex-1 overflow-y-auto" aria-label="Tools and navigation">
               <p className="mb-2 px-3 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400">Workspace</p>
               <ul className="space-y-1">
                 {MENU_ITEMS.map((item) => {
