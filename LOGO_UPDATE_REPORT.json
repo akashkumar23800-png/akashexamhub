@@ -1,0 +1,34 @@
+{
+  "base": "Original uploaded Akash-Exam-Hub-Updated.zip",
+  "image_original_dimensions": [
+    272,
+    232
+  ],
+  "image_cropped": false,
+  "logo_box_mobile": [
+    64,
+    64
+  ],
+  "logo_box_desktop": [
+    76,
+    76
+  ],
+  "desktop_breakpoint": "640px (Tailwind sm)",
+  "checks": {
+    "original_files_preserved": true,
+    "non_brand_files_byte_identical": true,
+    "build": "Not run; no working dependency installation available",
+    "browser_visual_test": "Not run"
+  },
+  "changed_files": [
+    "public/notes-logo.png",
+    "src/components/ui/Logo.tsx",
+    "src/components/layout/SiteHeader.tsx",
+    "src/components/auth/AuthScreen.tsx",
+    "public/website-icon-512x512.png",
+    "public/favicon-32.png",
+    "public/apple-touch-icon.png",
+    "index.html",
+    "app.html"
+  ]
+}

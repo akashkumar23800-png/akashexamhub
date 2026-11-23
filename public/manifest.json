@@ -1,0 +1,35 @@
+{
+  "id": "/",
+  "name": "Akash Exam Hub",
+  "short_name": "Akash Exam Hub",
+  "description": "Your Complete CBSE Learning Platform for Classes 6-12. Access Study Materials, NCERT Resources, MCQ Practice, Mock Tests and AI-Powered Learning Support in Hindi & English.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#f7f8fc",
+  "theme_color": "#101a36",
+  "lang": "en-IN",
+  "dir": "ltr",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/website-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
