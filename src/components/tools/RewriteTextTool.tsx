@@ -27,7 +27,8 @@ export function RewriteTextTool() {
     setError(null);
     setResult(null);
     try {
-      setResult(await askStudyAssistant({ mode: 'rewrite', input: trimmed, style }));
+      const { text: rewritten } = await askStudyAssistant({ mode: 'rewrite', input: trimmed, style });
+      setResult(rewritten);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'The text could not be rewritten. Please try again.');
     } finally {

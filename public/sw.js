@@ -1,12 +1,8 @@
-/* Akash Exam Hub service worker: makes the site installable and keeps the
-   homepage reachable offline. It never intercepts Supabase API calls,
-   cross-origin requests or non-GET requests, so authentication and database
-   behaviour stay exactly as they are without a service worker. */
-const CACHE = 'akash-exam-hub-v1';
+/* Akash Exam Hub service worker: keeps static icons precached for PWA
+   installability while ensuring API requests, Vite dev modules, and HTML
+   always go straight to the network and never serve stale responses. */
+const CACHE = 'akash-exam-hub-v4';
 const PRECACHE = [
-  '/',
-  '/index.html',
-  '/app.html',
   '/manifest.json',
   '/icon-192.png',
   '/website-icon-512x512.png',
@@ -19,7 +15,6 @@ self.addEventListener('install', (event) => {
     caches
       .open(CACHE)
       .then((cache) =>
-        // Individual failures must not abort the whole install.
         Promise.all(PRECACHE.map((url) => cache.add(url).catch(() => undefined)))
       )
       .then(() => self.skipWaiting())
@@ -40,38 +35,37 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-  // Let the Supabase backend, fonts and every other origin go straight to the network.
   if (url.origin !== self.location.origin) return;
 
+  // Never intercept API routes, Vite HMR/dev modules, or source files.
+  if (
+    url.pathname.startsWith('/api/') ||
+    url.pathname.startsWith('/src/') ||
+    url.pathname.startsWith('/@') ||
+    url.pathname.startsWith('/node_modules/')
+  ) {
+    return;
+  }
+
   if (request.mode === 'navigate') {
-    // Network first so the live site stays current, cache as offline fallback.
     event.respondWith(
-      fetch(request)
-        .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE).then((cache) => cache.put(request, copy)).catch(() => undefined);
-          return response;
-        })
-        .catch(() =>
-          caches.match(request).then((cached) => cached || caches.match('/index.html'))
-        )
+      fetch(request).catch(() =>
+        caches.match(request).then((cached) => cached || caches.match('/index.html'))
+      )
     );
     return;
   }
 
+  // Network-first for static assets so updated builds are always picked up immediately.
   event.respondWith(
-    caches.match(request).then(
-      (cached) =>
-        cached ||
-        fetch(request)
-          .then((response) => {
-            if (response && response.ok && response.type === 'basic') {
-              const copy = response.clone();
-              caches.open(CACHE).then((cache) => cache.put(request, copy)).catch(() => undefined);
-            }
-            return response;
-          })
-          .catch(() => cached)
-    )
+    fetch(request)
+      .then((response) => {
+        if (response && response.ok && response.type === 'basic' && PRECACHE.includes(url.pathname)) {
+          const copy = response.clone();
+          caches.open(CACHE).then((cache) => cache.put(request, copy)).catch(() => undefined);
+        }
+        return response;
+      })
+      .catch(() => caches.match(request))
   );
 });

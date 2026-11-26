@@ -1,0 +1,587 @@
+{
+  "subjects": [
+    {
+      "id": "a1000000-0000-4000-8000-000000000001",
+      "slug": "physics",
+      "name": "Physics",
+      "description": "Motion, force, light, electricity and more.",
+      "sort_order": 1
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000002",
+      "slug": "chemistry",
+      "name": "Chemistry",
+      "description": "Atoms, reactions, acids, bases and salts.",
+      "sort_order": 2
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000003",
+      "slug": "mathematics",
+      "name": "Mathematics",
+      "description": "Algebra, geometry, arithmetic and trigonometry.",
+      "sort_order": 3
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000004",
+      "slug": "reasoning",
+      "name": "Reasoning",
+      "description": "Logical, verbal and non-verbal reasoning.",
+      "sort_order": 4
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000005",
+      "slug": "biology",
+      "name": "Biology",
+      "description": "Cells, life processes and heredity.",
+      "sort_order": 5
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000006",
+      "slug": "english",
+      "name": "English",
+      "description": "Grammar, comprehension and writing skills.",
+      "sort_order": 6
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000007",
+      "slug": "hindi",
+      "name": "Hindi",
+      "description": "Vyakaran, sahitya and writing skills.",
+      "sort_order": 7
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000008",
+      "slug": "social-science",
+      "name": "Social Science",
+      "description": "History, geography, civics and economics.",
+      "sort_order": 8
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000009",
+      "slug": "history",
+      "name": "History",
+      "description": "Ancient, medieval and modern history.",
+      "sort_order": 9
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000010",
+      "slug": "geography",
+      "name": "Geography",
+      "description": "Physical and human geography of India and the world.",
+      "sort_order": 10
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000011",
+      "slug": "economics",
+      "name": "Economics",
+      "description": "Money, markets, national income and development.",
+      "sort_order": 11
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000012",
+      "slug": "political-science",
+      "name": "Political Science",
+      "description": "Constitution, governance and democracy.",
+      "sort_order": 12
+    }
+  ],
+  "questions": [
+    {
+      "id": "b1000000-0000-4000-8000-000000000101",
+      "subject_id": "a1000000-0000-4000-8000-000000000001",
+      "chapter": "Force and Laws of Motion",
+      "question_text": "What is the SI unit of force?",
+      "options": [
+        "Joule",
+        "Newton",
+        "Pascal",
+        "Watt"
+      ],
+      "correct_index": 1,
+      "explanation": "Force is measured in newtons (N), named after Isaac Newton.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000102",
+      "subject_id": "a1000000-0000-4000-8000-000000000001",
+      "chapter": "Light",
+      "question_text": "Approximately what is the speed of light in vacuum?",
+      "options": [
+        "3 x 10^8 m/s",
+        "3 x 10^6 m/s",
+        "3 x 10^10 m/s",
+        "3 x 10^4 m/s"
+      ],
+      "correct_index": 0,
+      "explanation": "Light travels at about 3 x 10^8 metres per second in vacuum.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000103",
+      "subject_id": "a1000000-0000-4000-8000-000000000001",
+      "chapter": "Electricity",
+      "question_text": "A resistor has a potential difference of 12 V and carries a current of 3 A. What is its resistance?",
+      "options": [
+        "2 ohm",
+        "4 ohm",
+        "36 ohm",
+        "9 ohm"
+      ],
+      "correct_index": 1,
+      "explanation": "By Ohm's law, R = V / I = 12 / 3 = 4 ohm.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000104",
+      "subject_id": "a1000000-0000-4000-8000-000000000001",
+      "chapter": "Light",
+      "question_text": "Which type of mirror is used by dentists to view enlarged images of teeth?",
+      "options": [
+        "Plane",
+        "Convex",
+        "Concave",
+        "Cylindrical"
+      ],
+      "correct_index": 2,
+      "explanation": "A concave mirror forms a magnified, virtual image when the object is close to it.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000105",
+      "subject_id": "a1000000-0000-4000-8000-000000000001",
+      "chapter": "Force and Laws of Motion",
+      "question_text": "A body stays at rest or in uniform motion unless acted on by an external force. Which law is this?",
+      "options": [
+        "Second law of motion",
+        "First law of motion",
+        "Third law of motion",
+        "Law of gravitation"
+      ],
+      "correct_index": 1,
+      "explanation": "This is Newton's first law of motion, also called the law of inertia.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000201",
+      "subject_id": "a1000000-0000-4000-8000-000000000002",
+      "chapter": "Atomic Structure",
+      "question_text": "What is the atomic number of carbon?",
+      "options": [
+        "4",
+        "6",
+        "8",
+        "12"
+      ],
+      "correct_index": 1,
+      "explanation": "Carbon has 6 protons, so its atomic number is 6.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000202",
+      "subject_id": "a1000000-0000-4000-8000-000000000002",
+      "chapter": "Acids, Bases and Salts",
+      "question_text": "What is the pH of a neutral solution at 25 degrees Celsius?",
+      "options": [
+        "0",
+        "1",
+        "7",
+        "14"
+      ],
+      "correct_index": 2,
+      "explanation": "A neutral solution has a pH of 7 at 25 degrees Celsius.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000203",
+      "subject_id": "a1000000-0000-4000-8000-000000000002",
+      "chapter": "Chemical Bonding",
+      "question_text": "What is the chemical formula of common table salt?",
+      "options": [
+        "NaCl",
+        "KCl",
+        "NaOH",
+        "CaCO3"
+      ],
+      "correct_index": 0,
+      "explanation": "Common salt is sodium chloride, NaCl.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000204",
+      "subject_id": "a1000000-0000-4000-8000-000000000002",
+      "chapter": "Metals and Non-metals",
+      "question_text": "Which gas is evolved when zinc reacts with dilute hydrochloric acid?",
+      "options": [
+        "Oxygen",
+        "Hydrogen",
+        "Chlorine",
+        "Carbon dioxide"
+      ],
+      "correct_index": 1,
+      "explanation": "Zinc displaces hydrogen from dilute HCl, producing hydrogen gas.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000205",
+      "subject_id": "a1000000-0000-4000-8000-000000000002",
+      "chapter": "Chemical Bonding",
+      "question_text": "How many hydrogen atoms are present in one molecule of water?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_index": 1,
+      "explanation": "Water is H2O, so each molecule has two hydrogen atoms.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000301",
+      "subject_id": "a1000000-0000-4000-8000-000000000003",
+      "chapter": "Percentage",
+      "question_text": "What is 15% of 200?",
+      "options": [
+        "20",
+        "25",
+        "30",
+        "35"
+      ],
+      "correct_index": 2,
+      "explanation": "15% of 200 = 0.15 x 200 = 30.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000302",
+      "subject_id": "a1000000-0000-4000-8000-000000000003",
+      "chapter": "Indices",
+      "question_text": "What is the value of 2 raised to the power 5?",
+      "options": [
+        "16",
+        "25",
+        "32",
+        "64"
+      ],
+      "correct_index": 2,
+      "explanation": "2 x 2 x 2 x 2 x 2 = 32.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000303",
+      "subject_id": "a1000000-0000-4000-8000-000000000003",
+      "chapter": "Triangles",
+      "question_text": "What is the sum of the interior angles of a triangle?",
+      "options": [
+        "90 degrees",
+        "180 degrees",
+        "270 degrees",
+        "360 degrees"
+      ],
+      "correct_index": 1,
+      "explanation": "The interior angles of any triangle add up to 180 degrees.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000304",
+      "subject_id": "a1000000-0000-4000-8000-000000000003",
+      "chapter": "Number Systems",
+      "question_text": "What is the HCF of 12 and 18?",
+      "options": [
+        "2",
+        "3",
+        "6",
+        "36"
+      ],
+      "correct_index": 2,
+      "explanation": "The highest common factor of 12 and 18 is 6.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000305",
+      "subject_id": "a1000000-0000-4000-8000-000000000003",
+      "chapter": "Linear Equations",
+      "question_text": "Solve for x: x + 5 = 12",
+      "options": [
+        "5",
+        "7",
+        "17",
+        "12"
+      ],
+      "correct_index": 1,
+      "explanation": "Subtract 5 from both sides: x = 7.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000401",
+      "subject_id": "a1000000-0000-4000-8000-000000000004",
+      "chapter": "Classification",
+      "question_text": "Which word is the odd one out? Apple, Banana, Carrot, Mango",
+      "options": [
+        "Apple",
+        "Banana",
+        "Carrot",
+        "Mango"
+      ],
+      "correct_index": 2,
+      "explanation": "Carrot is a vegetable; the others are fruits.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000402",
+      "subject_id": "a1000000-0000-4000-8000-000000000004",
+      "chapter": "Number Series",
+      "question_text": "Complete the series: 2, 4, 8, 16, ?",
+      "options": [
+        "18",
+        "24",
+        "32",
+        "20"
+      ],
+      "correct_index": 2,
+      "explanation": "Each term doubles the previous one, so the next term is 32.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000403",
+      "subject_id": "a1000000-0000-4000-8000-000000000004",
+      "chapter": "Analogy",
+      "question_text": "Book is to Reading as Fork is to ?",
+      "options": [
+        "Kitchen",
+        "Eating",
+        "Spoon",
+        "Food"
+      ],
+      "correct_index": 1,
+      "explanation": "A book is used for reading, and a fork is used for eating.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000404",
+      "subject_id": "a1000000-0000-4000-8000-000000000004",
+      "chapter": "Direction Sense",
+      "question_text": "Ram walks 3 km north and then 4 km east. How far is he from his starting point?",
+      "options": [
+        "7 km",
+        "5 km",
+        "4 km",
+        "3 km"
+      ],
+      "correct_index": 1,
+      "explanation": "By Pythagoras, the distance is sqrt(3^2 + 4^2) = 5 km.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000405",
+      "subject_id": "a1000000-0000-4000-8000-000000000004",
+      "chapter": "Number Series",
+      "question_text": "Complete the series: 1, 4, 9, 16, ?",
+      "options": [
+        "20",
+        "24",
+        "25",
+        "36"
+      ],
+      "correct_index": 2,
+      "explanation": "These are consecutive perfect squares, so the next term is 25.",
+      "difficulty": "easy"
+    }
+  ],
+  "tests": [
+    {
+      "id": "c1000000-0000-4000-8000-000000000001",
+      "title": "Physics Practice Test",
+      "description": "Five questions covering motion, light and electricity.",
+      "subject_id": "a1000000-0000-4000-8000-000000000001",
+      "kind": "practice",
+      "duration_minutes": 15,
+      "scheduled_at": null,
+      "is_published": true,
+      "question_ids": [
+        "b1000000-0000-4000-8000-000000000101",
+        "b1000000-0000-4000-8000-000000000102",
+        "b1000000-0000-4000-8000-000000000103",
+        "b1000000-0000-4000-8000-000000000104",
+        "b1000000-0000-4000-8000-000000000105"
+      ]
+    },
+    {
+      "id": "c1000000-0000-4000-8000-000000000002",
+      "title": "Chemistry Practice Test",
+      "description": "Five questions on atoms, acids and chemical bonding.",
+      "subject_id": "a1000000-0000-4000-8000-000000000002",
+      "kind": "practice",
+      "duration_minutes": 15,
+      "scheduled_at": null,
+      "is_published": true,
+      "question_ids": [
+        "b1000000-0000-4000-8000-000000000201",
+        "b1000000-0000-4000-8000-000000000202",
+        "b1000000-0000-4000-8000-000000000203",
+        "b1000000-0000-4000-8000-000000000204",
+        "b1000000-0000-4000-8000-000000000205"
+      ]
+    },
+    {
+      "id": "c1000000-0000-4000-8000-000000000003",
+      "title": "Mathematics Practice Test",
+      "description": "Five quick questions on percentages, indices and equations.",
+      "subject_id": "a1000000-0000-4000-8000-000000000003",
+      "kind": "practice",
+      "duration_minutes": 15,
+      "scheduled_at": null,
+      "is_published": true,
+      "question_ids": [
+        "b1000000-0000-4000-8000-000000000301",
+        "b1000000-0000-4000-8000-000000000302",
+        "b1000000-0000-4000-8000-000000000303",
+        "b1000000-0000-4000-8000-000000000304",
+        "b1000000-0000-4000-8000-000000000305"
+      ]
+    },
+    {
+      "id": "c1000000-0000-4000-8000-000000000004",
+      "title": "Reasoning Practice Test",
+      "description": "Five questions on series, analogies and direction sense.",
+      "subject_id": "a1000000-0000-4000-8000-000000000004",
+      "kind": "practice",
+      "duration_minutes": 10,
+      "scheduled_at": null,
+      "is_published": true,
+      "question_ids": [
+        "b1000000-0000-4000-8000-000000000401",
+        "b1000000-0000-4000-8000-000000000402",
+        "b1000000-0000-4000-8000-000000000403",
+        "b1000000-0000-4000-8000-000000000404",
+        "b1000000-0000-4000-8000-000000000405"
+      ]
+    },
+    {
+      "id": "c1000000-0000-4000-8000-000000000005",
+      "title": "Science Practice Test",
+      "description": "Physics and Chemistry questions in one timed paper.",
+      "subject_id": null,
+      "kind": "live",
+      "duration_minutes": 20,
+      "scheduled_at": null,
+      "is_published": true,
+      "question_ids": [
+        "b1000000-0000-4000-8000-000000000101",
+        "b1000000-0000-4000-8000-000000000102",
+        "b1000000-0000-4000-8000-000000000103",
+        "b1000000-0000-4000-8000-000000000104",
+        "b1000000-0000-4000-8000-000000000105",
+        "b1000000-0000-4000-8000-000000000201",
+        "b1000000-0000-4000-8000-000000000202",
+        "b1000000-0000-4000-8000-000000000203",
+        "b1000000-0000-4000-8000-000000000204",
+        "b1000000-0000-4000-8000-000000000205"
+      ]
+    },
+    {
+      "id": "c1000000-0000-4000-8000-000000000006",
+      "title": "Akash Exam Hub Practice Exam",
+      "description": "A mixed paper across all practice subjects.",
+      "subject_id": null,
+      "kind": "live",
+      "duration_minutes": 30,
+      "scheduled_at": null,
+      "is_published": true,
+      "question_ids": [
+        "b1000000-0000-4000-8000-000000000101",
+        "b1000000-0000-4000-8000-000000000102",
+        "b1000000-0000-4000-8000-000000000103",
+        "b1000000-0000-4000-8000-000000000104",
+        "b1000000-0000-4000-8000-000000000105",
+        "b1000000-0000-4000-8000-000000000201",
+        "b1000000-0000-4000-8000-000000000202",
+        "b1000000-0000-4000-8000-000000000203",
+        "b1000000-0000-4000-8000-000000000204",
+        "b1000000-0000-4000-8000-000000000205",
+        "b1000000-0000-4000-8000-000000000301",
+        "b1000000-0000-4000-8000-000000000302",
+        "b1000000-0000-4000-8000-000000000303",
+        "b1000000-0000-4000-8000-000000000304",
+        "b1000000-0000-4000-8000-000000000305",
+        "b1000000-0000-4000-8000-000000000401",
+        "b1000000-0000-4000-8000-000000000402",
+        "b1000000-0000-4000-8000-000000000403",
+        "b1000000-0000-4000-8000-000000000404",
+        "b1000000-0000-4000-8000-000000000405"
+      ]
+    },
+    {
+      "id": "c1000000-0000-4000-8000-000000000007",
+      "title": "CBSE Class 10 Mock Test",
+      "description": "A timed mock covering Physics, Chemistry and Mathematics.",
+      "subject_id": null,
+      "kind": "live",
+      "duration_minutes": 40,
+      "scheduled_at": null,
+      "is_published": true,
+      "question_ids": [
+        "b1000000-0000-4000-8000-000000000101",
+        "b1000000-0000-4000-8000-000000000102",
+        "b1000000-0000-4000-8000-000000000103",
+        "b1000000-0000-4000-8000-000000000104",
+        "b1000000-0000-4000-8000-000000000105",
+        "b1000000-0000-4000-8000-000000000201",
+        "b1000000-0000-4000-8000-000000000202",
+        "b1000000-0000-4000-8000-000000000203",
+        "b1000000-0000-4000-8000-000000000204",
+        "b1000000-0000-4000-8000-000000000205",
+        "b1000000-0000-4000-8000-000000000301",
+        "b1000000-0000-4000-8000-000000000302",
+        "b1000000-0000-4000-8000-000000000303",
+        "b1000000-0000-4000-8000-000000000304",
+        "b1000000-0000-4000-8000-000000000305"
+      ]
+    }
+  ],
+  "attempts": [],
+  "attempt_answers": [],
+  "notes": [],
+  "study_materials": [
+    {
+      "id": "m-1",
+      "title": "NCERT Notes: Light — Reflection and Refraction",
+      "description": "Key formulas, mirror and lens sign conventions, and ray diagram rules.",
+      "category": "ncert_notes",
+      "class_level": 10,
+      "medium": "English",
+      "body": "Laws of Reflection:\n1. The angle of incidence equals the angle of reflection.\n2. Incident ray, normal, and reflected ray lie in the same plane.\n\nMirror Formula: 1/f = 1/v + 1/u\nLens Formula: 1/f = 1/v - 1/u",
+      "content_url": null
+    },
+    {
+      "id": "m-2",
+      "title": "NCERT नोट्स: प्रकाश — परावर्तन तथा अपवर्तन",
+      "description": "दर्पण और लेंस के मुख्य सूत्र एवं नियम।",
+      "category": "ncert_notes",
+      "class_level": 10,
+      "medium": "Hindi",
+      "body": "परावर्तन के नियम:\n1. आपतन कोण परावर्तन कोण के बराबर होता है।\n2. आपतित किरण, अभिलंब और परावर्तित किरण एक ही तल में होते हैं।\n\nदर्पण सूत्र: 1/f = 1/v + 1/u",
+      "content_url": null
+    },
+    {
+      "id": "m-3",
+      "title": "Important Questions: Acids, Bases and Salts",
+      "description": "Board-important questions on pH scale, indicators and neutralisation.",
+      "category": "important_questions",
+      "class_level": 10,
+      "medium": "English",
+      "body": "1. Why does dry HCl gas not change the colour of dry litmus paper?\n2. Write the chemical equation for baking soda heating.\n3. What is the pH of neutral water at 25°C?",
+      "content_url": null
+    },
+    {
+      "id": "m-4",
+      "title": "Revision Notes: Introduction to Trigonometry",
+      "description": "One-page trigonometric ratios, standard angles and identities.",
+      "category": "revision_notes",
+      "class_level": 10,
+      "medium": "English",
+      "body": "sin²θ + cos²θ = 1\n1 + tan²θ = sec²θ\n1 + cot²θ = cosec²θ",
+      "content_url": null
+    }
+  ],
+  "students_count": 0
+}

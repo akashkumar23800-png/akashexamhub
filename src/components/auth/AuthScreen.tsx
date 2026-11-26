@@ -151,6 +151,11 @@ export function AuthScreen() {
       <div className="w-full max-w-[590px] animate-slide-up">
         <div className="mx-auto max-w-[500px]">
           <div className="mb-14 text-center">
+            <div className="mb-4 flex justify-center">
+              <a href="#/" className="text-xs font-bold uppercase tracking-wider text-slate-500 transition hover:text-slate-900">
+                ← Back to Akash Exam Hub
+              </a>
+            </div>
             <div className="mb-6 flex justify-center"><Logo /></div>
             <h1 className="text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl">{isSignup ? 'Create your account' : 'Welcome back'}</h1>
             {isSignup && <p className="mt-3 text-sm text-slate-500">Start your exam preparation today.</p>}

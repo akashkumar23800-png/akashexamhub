@@ -52,7 +52,7 @@ export function DetectAiTool() {
     setError(null);
     setVerdict(null);
     try {
-      const raw = await askStudyAssistant({ mode: 'ai-detect', input: trimmed });
+      const { text: raw } = await askStudyAssistant({ mode: 'ai-detect', input: trimmed });
       setVerdict(parseVerdict(raw));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'The text could not be analysed. Please try again.');

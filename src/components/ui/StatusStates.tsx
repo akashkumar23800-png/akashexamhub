@@ -9,12 +9,20 @@ export function LoadingState({ label = 'Loading...' }: { label?: string }) {
   );
 }
 
-export function ErrorState({ message, onRetry }: { message: string; onRetry?: () => void }) {
+export function ErrorState({
+  title = 'We could not load this section.',
+  message,
+  onRetry,
+}: {
+  title?: string;
+  message: string;
+  onRetry?: () => void;
+}) {
   return (
     <div className="flex flex-col items-center gap-4 rounded-2xl border border-red-200 bg-red-50 px-6 py-10 text-center" role="alert">
       <AlertTriangle className="h-8 w-8 text-red-600" aria-hidden="true" />
       <div>
-        <p className="font-semibold text-red-800">We could not load this section.</p>
+        <p className="font-semibold text-red-800">{title}</p>
         <p className="mt-1 text-sm text-red-700">{message}</p>
       </div>
       {onRetry && (

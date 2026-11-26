@@ -12,9 +12,9 @@ const FLOATING_ICONS: { icon: LucideIcon; className: string; delay: string }[] =
 
 export function HeroSection({ stats, ctaHref }: { stats: PlatformStats; ctaHref: string }) {
   const statItems = [
-    { label: 'Questions', value: stats.questions, icon: Rocket, color: 'text-indigo-200', background: 'bg-indigo-500/30' },
-    { label: 'Mock Tests', value: stats.tests, icon: FlaskConical, color: 'text-emerald-200', background: 'bg-emerald-500/30' },
-    { label: 'Students', value: stats.students, icon: Users, color: 'text-amber-200', background: 'bg-amber-500/30' },
+    { label: 'Questions', value: stats.questions, icon: Rocket, color: 'text-indigo-100', background: 'bg-indigo-400/35 ring-1 ring-white/25' },
+    { label: 'Mock Tests', value: stats.tests, icon: FlaskConical, color: 'text-teal-100', background: 'bg-teal-400/25 ring-1 ring-white/25' },
+    { label: 'Students', value: stats.students, icon: Users, color: 'text-amber-100', background: 'bg-amber-400/30 ring-1 ring-white/25' },
   ];
 
   return (
@@ -34,10 +34,10 @@ export function HeroSection({ stats, ctaHref }: { stats: PlatformStats; ctaHref:
             <div className="pt-5">
               <a
                 href={ctaHref}
-                className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:scale-105 hover:from-amber-600 hover:to-orange-600 sm:px-6 sm:text-base"
+                className="group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:scale-105 hover:from-amber-600 hover:to-orange-600 sm:px-6 sm:text-base"
               >
                 Take a free mock test
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/25">
                   <Play className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
                 </span>
               </a>
@@ -56,19 +56,19 @@ export function HeroSection({ stats, ctaHref }: { stats: PlatformStats; ctaHref:
               </span>
             ))}
 
-            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+            <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
               {statItems.map(({ label, value, icon: Icon, color, background }) => (
                 <div
                   key={label}
-                  className="rounded-2xl border border-white/10 bg-white/10 p-3 text-center backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:bg-white/20 sm:p-4"
+                  className="rounded-2xl border border-white/15 bg-white/10 p-3 text-center backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:bg-white/20 sm:p-4"
                 >
-                  <span className={`mx-auto flex h-9 w-9 items-center justify-center rounded-xl ${background} ${color}`}>
+                  <span className={`mx-auto flex h-10 w-10 items-center justify-center rounded-full ${background} ${color}`}>
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <p className="mt-3 text-lg font-extrabold tabular-nums sm:text-2xl">
-                    <AnimatedNumber value={value} />
+                    {value > 0 ? <AnimatedNumber value={value} /> : '—'}
                   </p>
-                  <p className={`text-[9px] uppercase tracking-wider ${color} sm:text-[10px]`}>{label}</p>
+                  <p className={`mt-0.5 text-[9px] font-semibold uppercase tracking-wider ${color} sm:text-[10px]`}>{label}</p>
                 </div>
               ))}
             </div>

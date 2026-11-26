@@ -7,8 +7,8 @@ import {
   Image as ImageIcon,
   Loader2,
   Mic,
+  Paperclip,
   Plus,
-  Send,
   Sparkles,
   X,
 } from 'lucide-react';
@@ -121,6 +121,7 @@ export function AskAnythingBox() {
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const photosInputRef = useRef<HTMLInputElement>(null);
   const filesInputRef = useRef<HTMLInputElement>(null);
+  const anyFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => subscribeToStudyLanguage(setLanguage), []);
 
@@ -297,8 +298,16 @@ export function AskAnythingBox() {
     event.target.value = '';
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleAnyFileInput = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.type.startsWith('image/')) void acceptImage(file);
+      else void acceptDocument(file);
+    }
+    event.target.value = '';
+  };
+
+  const submitQuestion = async () => {
     const trimmed = question.trim();
     if ((!trimmed && !attachment) || loading) return;
 
@@ -323,7 +332,7 @@ export function AskAnythingBox() {
             : `The student attached the document "${attachment.name}", but its contents cannot be read in the browser. Answer from the question text and say what extra detail is needed.`,
         );
       }
-      const text = await askStudyAssistant({
+      const { text } = await askStudyAssistant({
         mode: 'ask',
         input: promptParts.join('\n\n'),
         language,
@@ -343,196 +352,215 @@ export function AskAnythingBox() {
     }
   };
 
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    void submitQuestion();
+  };
+
+  const handleActionButton = () => {
+    if (question.trim() || attachment) {
+      void submitQuestion();
+    } else {
+      toggleLiveResponse();
+    }
+  };
+
   return (
     <div className="mx-auto w-full max-w-3xl">
       <div className="mb-5 text-center">
-        <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-blue-700">
+        <p className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-[0.18em] text-blue-700">
           <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
           AI Study Assistant
         </p>
         <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">Ask anything about your studies</h2>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="rounded-3xl border border-slate-200 bg-white p-3 shadow-[0_18px_50px_-18px_rgba(15,23,42,0.25)] sm:p-4"
-      >
-        {attachment && (
-          <div className="mb-3 flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
-            {attachment.preview ? (
-              <img src={attachment.preview} alt="" className="h-10 w-10 flex-shrink-0 rounded-lg object-cover" />
-            ) : (
-              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
-                <FileText className="h-5 w-5" aria-hidden="true" />
-              </span>
-            )}
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-slate-800">{attachment.name}</p>
-              <p className="text-xs text-slate-500">
-                {attachment.kind === 'image' ? 'Image' : 'Document'} · {formatSize(attachment.size)}
-                {attachment.kind === 'document' && !attachment.text ? ' · text extraction unavailable' : ''}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setAttachment(null)}
-              aria-label={`Remove ${attachment.name}`}
-              className="rounded-full p-1.5 text-slate-500 transition hover:bg-white hover:text-slate-900"
-            >
-              <X className="h-4 w-4" aria-hidden="true" />
-            </button>
-          </div>
-        )}
-
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          <div ref={attachmentRef} className="relative flex-shrink-0">
-            <button
-              type="button"
-              onClick={() => setAttachmentOpen((open) => !open)}
-              aria-label="Add an attachment"
-              aria-expanded={attachmentOpen}
-              aria-haspopup="true"
-              className={`flex h-11 w-11 items-center justify-center rounded-full border transition ${
-                attachmentOpen
-                  ? 'border-violet-300 bg-violet-50 text-violet-700'
-                  : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900'
-              }`}
-            >
-              <Plus className={`h-5 w-5 transition-transform ${attachmentOpen ? 'rotate-45' : ''}`} aria-hidden="true" />
-            </button>
-
-            {attachmentOpen && (
-              <div
-                role="menu"
-                aria-label="Attach to your question"
-                className="absolute bottom-[calc(100%+10px)] left-0 z-30 w-60 origin-bottom-left animate-fade-in rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/10"
-              >
-                <span
-                  className="absolute -bottom-1.5 left-5 h-3 w-3 rotate-45 border-b border-r border-slate-200 bg-white"
-                  aria-hidden="true"
-                />
-                {ATTACHMENT_OPTIONS.map(({ id, label, hint, Icon, tile }) => (
-                  <button
-                    key={id}
-                    type="button"
-                    role="menuitem"
-                    onClick={() => pickOption(id)}
-                    className="flex w-full items-center gap-3 rounded-xl px-2.5 py-2.5 text-left transition hover:bg-slate-50 focus-visible:bg-slate-50"
-                  >
-                    <span className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full ${tile}`}>
-                      <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block text-sm font-bold text-slate-900">{label}</span>
-                      <span className="block truncate text-[11px] font-medium text-slate-500">{hint}</span>
-                    </span>
-                  </button>
-                ))}
+      <div className="rounded-[26px] bg-gradient-to-r from-orange-200/80 via-indigo-200/60 to-blue-300/80 p-[1.5px] shadow-[0_14px_38px_-14px_rgba(59,130,246,0.28)]">
+        <form
+          onSubmit={handleSubmit}
+          className="rounded-[24px] bg-white px-4 pb-3 pt-4"
+        >
+          {attachment && (
+            <div className="mb-3 flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
+              {attachment.preview ? (
+                <img src={attachment.preview} alt="" className="h-10 w-10 flex-shrink-0 rounded-lg object-cover" />
+              ) : (
+                <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+                  <FileText className="h-5 w-5" aria-hidden="true" />
+                </span>
+              )}
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold text-slate-800">{attachment.name}</p>
+                <p className="text-xs text-slate-500">
+                  {attachment.kind === 'image' ? 'Image' : 'Document'} · {formatSize(attachment.size)}
+                  {attachment.kind === 'document' && !attachment.text ? ' · text extraction unavailable' : ''}
+                </p>
               </div>
-            )}
-
-            <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="sr-only" onChange={handleImageInput} tabIndex={-1} aria-hidden="true" />
-            <input ref={photosInputRef} type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={handleImageInput} tabIndex={-1} aria-hidden="true" />
-            <input
-              ref={filesInputRef}
-              type="file"
-              accept=".pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
-              className="sr-only"
-              onChange={handleDocumentInput}
-              tabIndex={-1}
-              aria-hidden="true"
-            />
-          </div>
+              <button
+                type="button"
+                onClick={() => setAttachment(null)}
+                aria-label={`Remove ${attachment.name}`}
+                className="rounded-full p-1.5 text-slate-500 transition hover:bg-white hover:text-slate-900"
+              >
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
+            </div>
+          )}
 
           <input
             type="text"
             value={question}
             onChange={(event) => setQuestion(event.target.value)}
-            placeholder="Ask anything..."
+            placeholder="Ask anything"
             aria-label="Ask anything"
             maxLength={4000}
-            className="min-w-0 flex-1 bg-transparent px-1.5 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none sm:px-2"
+            className="w-full bg-transparent px-1 pb-3 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none"
           />
 
-          <button
-            type="button"
-            onClick={toggleListening}
-            aria-label={listening ? 'Stop voice input' : 'Speak your question'}
-            aria-pressed={listening}
-            className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full transition ${
-              listening
-                ? 'animate-pulse bg-rose-500 text-white shadow-lg shadow-rose-500/30'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-            }`}
-          >
-            <Mic className="h-5 w-5" aria-hidden="true" />
-          </button>
+          <div className="flex items-center justify-between pt-1">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => anyFileInputRef.current?.click()}
+                aria-label="Attach file"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+              >
+                <Paperclip className="h-4 w-4" aria-hidden="true" />
+              </button>
 
-          <button
-            type="button"
-            onClick={toggleLiveResponse}
-            aria-pressed={liveResponse}
-            aria-label={liveResponse ? 'Turn off Live Response' : 'Turn on Live Response'}
-            title="Read every answer aloud as it arrives"
-            className={`flex h-9 flex-shrink-0 items-center gap-1.5 rounded-full px-2.5 text-[11px] font-bold transition sm:h-10 sm:px-3 sm:text-xs ${
-              liveResponse
-                ? 'bg-violet-700 text-white shadow-md shadow-violet-700/25 hover:bg-violet-800'
-                : 'border border-slate-200 text-slate-600 hover:border-violet-200 hover:bg-violet-50 hover:text-violet-800'
-            }`}
-          >
-            <AudioLines className={`h-4 w-4 ${speaking ? 'animate-pulse' : ''}`} aria-hidden="true" />
-            Live Response
-          </button>
+              <div ref={attachmentRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setAttachmentOpen((open) => !open)}
+                  aria-label="Add an attachment"
+                  aria-expanded={attachmentOpen}
+                  aria-haspopup="true"
+                  className={`flex h-9 w-9 items-center justify-center rounded-full border transition ${
+                    attachmentOpen
+                      ? 'border-violet-300 bg-violet-50 text-violet-700'
+                      : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900'
+                  }`}
+                >
+                  <Plus className={`h-4 w-4 transition-transform ${attachmentOpen ? 'rotate-45' : ''}`} aria-hidden="true" />
+                </button>
 
-          <button
-            type="submit"
-            disabled={(!question.trim() && !attachment) || loading}
-            aria-label="Send question"
-            className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-slate-900 text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
-          >
-            {loading ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" /> : <Send className="h-5 w-5" aria-hidden="true" />}
-          </button>
-        </div>
+                {attachmentOpen && (
+                  <div
+                    role="menu"
+                    aria-label="Attach to your question"
+                    className="absolute bottom-[calc(100%+10px)] left-0 z-30 w-60 origin-bottom-left animate-fade-in rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/10"
+                  >
+                    <span
+                      className="absolute -bottom-1.5 left-4 h-3 w-3 rotate-45 border-b border-r border-slate-200 bg-white"
+                      aria-hidden="true"
+                    />
+                    {ATTACHMENT_OPTIONS.map(({ id, label, hint, Icon, tile }) => (
+                      <button
+                        key={id}
+                        type="button"
+                        role="menuitem"
+                        onClick={() => pickOption(id)}
+                        className="flex w-full items-center gap-3 rounded-xl px-2.5 py-2.5 text-left transition hover:bg-slate-50 focus-visible:bg-slate-50"
+                      >
+                        <span className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full ${tile}`}>
+                          <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-sm font-bold text-slate-900">{label}</span>
+                          <span className="block truncate text-[11px] font-medium text-slate-500">{hint}</span>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
 
-        <p className="mt-2 px-1 text-[11px] font-medium text-slate-400">
-          {liveResponse ? 'Live Response is on — answers are read aloud.' : 'Attach a photo, image or document, or speak your question.'}
-        </p>
-
-        {voiceError && (
-          <p className="mt-3 flex items-start gap-2 rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-800" role="alert">
-            <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" aria-hidden="true" />
-            {voiceError}
-          </p>
-        )}
-
-        {loading && (
-          <div className="mt-4 flex items-center gap-3 border-t border-slate-100 pt-4 text-sm text-slate-600" role="status">
-            <Loader2 className="h-4 w-4 animate-spin text-blue-700" aria-hidden="true" />
-            Thinking about &ldquo;{submittedQuestion}&rdquo;...
-          </div>
-        )}
-        {error && (
-          <div className="mt-4 flex items-start gap-3 border-t border-slate-100 pt-4 text-sm text-red-700" role="alert">
-            <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" aria-hidden="true" />
-            <p>{error}</p>
-          </div>
-        )}
-        {answer && !loading && (
-          <div className="mt-4 border-t border-slate-100 pt-4">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Your question</p>
-              {liveResponse && (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-violet-700">
-                  <span className={`h-1.5 w-1.5 rounded-full ${speaking ? 'animate-pulse bg-rose-500' : 'bg-violet-500'}`} />
-                  {speaking ? 'Speaking' : 'Live Response'}
-                </span>
-              )}
+                <input ref={anyFileInputRef} type="file" accept="image/png,image/jpeg,image/webp,.pdf,.doc,.docx,.txt" className="sr-only" onChange={handleAnyFileInput} tabIndex={-1} aria-hidden="true" />
+                <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="sr-only" onChange={handleImageInput} tabIndex={-1} aria-hidden="true" />
+                <input ref={photosInputRef} type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={handleImageInput} tabIndex={-1} aria-hidden="true" />
+                <input
+                  ref={filesInputRef}
+                  type="file"
+                  accept=".pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                  className="sr-only"
+                  onChange={handleDocumentInput}
+                  tabIndex={-1}
+                  aria-hidden="true"
+                />
+              </div>
             </div>
-            <p className="mt-1 text-sm font-semibold text-slate-900">{submittedQuestion}</p>
-            <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-slate-700">{answer}</p>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={toggleListening}
+                aria-label={listening ? 'Stop voice input' : 'Speak your question'}
+                aria-pressed={listening}
+                className={`flex h-9 w-9 items-center justify-center rounded-full transition ${
+                  listening
+                    ? 'animate-pulse bg-rose-500 text-white shadow-lg shadow-rose-500/30'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                }`}
+              >
+                <Mic className="h-5 w-5" aria-hidden="true" />
+              </button>
+
+              <button
+                type="button"
+                onClick={handleActionButton}
+                disabled={loading}
+                aria-label={question.trim() || attachment ? 'Send question' : liveResponse ? 'Turn off Live Response' : 'Turn on Live Response'}
+                aria-pressed={!question.trim() && !attachment ? liveResponse : undefined}
+                className={`flex h-9 w-9 items-center justify-center rounded-full text-white shadow-md transition ${
+                  liveResponse
+                    ? 'bg-violet-700 shadow-violet-600/30 hover:bg-violet-800'
+                    : 'bg-blue-600 shadow-blue-600/30 hover:bg-blue-700'
+                }`}
+              >
+                {loading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                ) : (
+                  <AudioLines className={`h-4 w-4 ${speaking ? 'animate-pulse' : ''}`} aria-hidden="true" />
+                )}
+              </button>
+            </div>
           </div>
-        )}
-      </form>
+
+          {voiceError && (
+            <p className="mt-3 flex items-start gap-2 rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-800" role="alert">
+              <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" aria-hidden="true" />
+              {voiceError}
+            </p>
+          )}
+
+          {loading && (
+            <div className="mt-4 flex items-center gap-3 border-t border-slate-100 pt-4 text-sm text-slate-600" role="status">
+              <Loader2 className="h-4 w-4 animate-spin text-blue-700" aria-hidden="true" />
+              Thinking about &ldquo;{submittedQuestion}&rdquo;...
+            </div>
+          )}
+          {error && (
+            <div className="mt-4 flex items-start gap-3 border-t border-slate-100 pt-4 text-sm text-red-700" role="alert">
+              <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" aria-hidden="true" />
+              <p>{error}</p>
+            </div>
+          )}
+          {answer && !loading && (
+            <div className="mt-4 border-t border-slate-100 pt-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Your question</p>
+                {liveResponse && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-violet-700">
+                    <span className={`h-1.5 w-1.5 rounded-full ${speaking ? 'animate-pulse bg-rose-500' : 'bg-violet-500'}`} />
+                    {speaking ? 'Speaking' : 'Live Response'}
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 text-sm font-semibold text-slate-900">{submittedQuestion}</p>
+              <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-slate-700">{answer}</p>
+            </div>
+          )}
+        </form>
+      </div>
     </div>
   );
 }

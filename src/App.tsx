@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { AuthProvider } from '@/contexts/AuthProvider';
 import { useAuth } from '@/hooks/useAuth';
 import { AuthScreen } from '@/components/auth/AuthScreen';
@@ -6,6 +7,13 @@ import { LoadingState } from '@/components/ui/StatusStates';
 
 function AuthGate() {
   const { user, loading } = useAuth();
+  const [hash, setHash] = useState(() => window.location.hash);
+
+  useEffect(() => {
+    const onHashChange = () => setHash(window.location.hash);
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
 
   if (loading) {
     return (
@@ -15,7 +23,11 @@ function AuthGate() {
     );
   }
 
-  return user ? <AppShell /> : <AuthScreen />;
+  if (hash.startsWith('#auth') && !user) {
+    return <AuthScreen />;
+  }
+
+  return <AppShell />;
 }
 
 export default function App() {

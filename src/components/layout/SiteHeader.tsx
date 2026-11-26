@@ -33,6 +33,11 @@ type MenuItem = {
   action?: 'new-chat';
 };
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
 const NAV_ITEMS: { key: NavKey; label: string; href: string }[] = [
   { key: 'dashboard', label: 'Dashboard', href: '#/' },
   { key: 'practice', label: 'Practice Tests', href: '#/practice' },
@@ -63,8 +68,28 @@ export function SiteHeader({ route }: { route: Route }) {
   const [signOutOpen, setSignOutOpen] = useState(false);
   const [signOutPending, setSignOutPending] = useState(false);
   const [signOutError, setSignOutError] = useState<string | null>(null);
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [installHelpOpen, setInstallHelpOpen] = useState(false);
+  const [installed, setInstalled] = useState(false);
   const active = navKeyFor(route);
   const currentHash = typeof window === 'undefined' ? '#/' : window.location.hash || '#/';
+
+  useEffect(() => {
+    const onBeforeInstall = (event: Event) => {
+      event.preventDefault();
+      setInstallPrompt(event as BeforeInstallPromptEvent);
+    };
+    const onInstalled = () => {
+      setInstallPrompt(null);
+      setInstalled(true);
+    };
+    window.addEventListener('beforeinstallprompt', onBeforeInstall);
+    window.addEventListener('appinstalled', onInstalled);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onBeforeInstall);
+      window.removeEventListener('appinstalled', onInstalled);
+    };
+  }, []);
 
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -91,6 +116,17 @@ export function SiteHeader({ route }: { route: Route }) {
   useEffect(() => {
     document.documentElement.dataset.theme = darkMode ? 'dark' : 'light';
   }, [darkMode]);
+
+  const handleInstallClick = async () => {
+    if (installPrompt) {
+      await installPrompt.prompt();
+      const choice = await installPrompt.userChoice.catch(() => ({ outcome: 'dismissed' as const }));
+      setInstallPrompt(null);
+      if (choice.outcome === 'accepted') setInstalled(true);
+      return;
+    }
+    setInstallHelpOpen(true);
+  };
 
   const openAuth = async (mode: 'signin' | 'signup') => {
     setMenuOpen(false);
@@ -138,8 +174,8 @@ export function SiteHeader({ route }: { route: Route }) {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/85 backdrop-blur-xl">
-        <div className="mx-auto flex min-h-[72px] max-w-7xl items-center gap-2 py-1 sm:min-h-[84px] lg:gap-6 px-3 sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/95 backdrop-blur-xl">
+        <div className="mx-auto flex min-h-[68px] max-w-7xl items-center gap-2 px-3 py-1 sm:min-h-[78px] sm:px-6 lg:gap-6 lg:px-8">
           <Logo />
 
           <nav className="hidden flex-1 items-center gap-1 lg:flex" aria-label="Main">
@@ -166,10 +202,19 @@ export function SiteHeader({ route }: { route: Route }) {
             })}
           </nav>
 
-          <div className="ml-auto flex items-center gap-2">
-            <div className="hidden lg:block">
-              <SignOutButton />
-            </div>
+          <div className="ml-auto flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => void handleInstallClick()}
+              className="rounded-full bg-[#3ee4f8] px-3.5 py-1.5 text-[11px] font-extrabold uppercase tracking-wide text-slate-900 shadow-[0_0_18px_rgba(62,228,248,0.65)] transition hover:bg-[#22d3ee]"
+            >
+              {installed ? 'INSTALLED' : 'INSTALL NOW'}
+            </button>
+            {user && (
+              <div className="hidden lg:block">
+                <SignOutButton />
+              </div>
+            )}
             <ProfileMenu />
             <button
               type="button"
@@ -184,6 +229,30 @@ export function SiteHeader({ route }: { route: Route }) {
           </div>
         </div>
       </header>
+
+      {installHelpOpen && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="install-modal-title">
+          <button type="button" aria-label="Close install instructions" onClick={() => setInstallHelpOpen(false)} className="absolute inset-0 bg-slate-950/50 backdrop-blur-sm" />
+          <div className="relative w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
+            <h2 id="install-modal-title" className="text-lg font-extrabold text-slate-900">Install Akash Exam Hub</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Add Akash Exam Hub to your home screen for fast access:
+            </p>
+            <ol className="mt-3 list-decimal space-y-1.5 pl-5 text-sm text-slate-600">
+              <li>On Android Chrome, open the browser menu and tap <strong>Install app</strong>.</li>
+              <li>On iPhone/iPad Safari, tap <strong>Share</strong> and choose <strong>Add to Home Screen</strong>.</li>
+              <li>On desktop Chrome or Edge, click the install icon in the address bar.</li>
+            </ol>
+            <button
+              type="button"
+              onClick={() => setInstallHelpOpen(false)}
+              className="mt-5 w-full rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-slate-800"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
 
       {menuOpen && (
         <div className="fixed inset-0 z-50" role="presentation">
@@ -301,7 +370,7 @@ export function SiteHeader({ route }: { route: Route }) {
                     className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-bold text-slate-700 transition hover:bg-red-50 hover:text-red-700"
                   >
                     <LogOut className="h-[18px] w-[18px] flex-shrink-0 text-slate-500" aria-hidden="true" />
-                    Sign Out
+                    {user ? 'Sign Out' : 'Login'}
                   </button>
                 </li>
               </ul>

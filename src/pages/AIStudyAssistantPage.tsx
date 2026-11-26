@@ -144,7 +144,12 @@ export function AIStudyAssistantPage() {
         availableMinutes: minutes, topics, history: nextHistory, image: active === 'doubt' ? image : undefined,
       });
       if (active === 'doubt') {
-        setHistory([...nextHistory, { role: 'user', text: input.trim() }, { role: 'model', text: result.text }].slice(-12));
+        const nextItems: AssistantHistoryItem[] = [
+          ...nextHistory,
+          { role: 'user', text: input.trim() },
+          { role: 'model', text: result.text },
+        ];
+        setHistory(nextItems.slice(-12));
       }
       setAnswer(result.text);
       if (active === 'quiz') {
@@ -156,7 +161,7 @@ export function AIStudyAssistantPage() {
         setQuiz(parsed);
       } else if (active !== 'doubt') {
         await saveRecord(moduleRecordType[active], `${modules.find((item) => item.id === active)?.title}: ${chapter || subject}`, result.text, {
-          classLevel, subject, chapter, language, difficulty: active === 'quiz' ? difficulty : undefined,
+          classLevel, subject, chapter, language,
           availableMinutes: active === 'planner' ? minutes : undefined,
           attemptsAnalyzed: active === 'performance' ? (performanceData as { attempts: unknown[] }).attempts.length : undefined,
         });

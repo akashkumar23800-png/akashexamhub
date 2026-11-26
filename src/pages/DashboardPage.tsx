@@ -1,6 +1,7 @@
 import { Reveal } from '@/components/ui/Reveal';
 import { HeroSection } from '@/components/dashboard/HeroSection';
 import { AskAnythingBox } from '@/components/home/AskAnythingBox';
+import { StudyTodaySection } from '@/components/home/StudyTodaySection';
 import { TrustedByMillions } from '@/components/home/TrustedByMillions';
 import { ToolsShowcase } from '@/components/home/ToolsShowcase';
 import { SubjectCard } from '@/components/dashboard/SubjectCard';
@@ -19,18 +20,28 @@ import {
 } from '@/lib/api';
 import { testAvailability } from '@/lib/format';
 import { useAsync } from '@/hooks/useAsync';
-import type { TestRow } from '@/lib/types';
+import type { PlatformStats, TestRow } from '@/lib/types';
 import { ArrowUpRight, BookOpen, ClipboardList, GraduationCap, Radio, Sparkles, Trophy } from 'lucide-react';
 
-async function loadDashboard() {
-  const [subjects, tests, stats, attempts, answers] = await Promise.all([
-    fetchSubjects(),
-    fetchPublishedTests(),
-    fetchPlatformStats(),
+const EMPTY_STATS: PlatformStats = {
+  questions: 0,
+  tests: 0,
+  students: 0,
+  notes_total: 0,
+  notes_today: 0,
+};
+
+async function loadPerformance() {
+  const [attempts, answers] = await Promise.all([
     fetchMyAttempts(),
     fetchMyAttemptAnswers(),
   ]);
-  return { subjects, tests, stats, attempts, answers, now: Date.now() };
+  return { attempts, answers };
+}
+
+async function loadTestsWithTimestamp() {
+  const tests = await fetchPublishedTests();
+  return { tests, now: Date.now() };
 }
 
 function pickFeaturedTest(tests: TestRow[], now: number): TestRow | undefined {
@@ -41,45 +52,75 @@ function pickFeaturedTest(tests: TestRow[], now: number): TestRow | undefined {
 }
 
 export function DashboardPage() {
-  const { data, error, loading, reload } = useAsync(loadDashboard, []);
+  const statsState = useAsync(fetchPlatformStats, []);
+  const subjectsState = useAsync(fetchSubjects, []);
+  const testsState = useAsync(loadTestsWithTimestamp, []);
+  const performanceState = useAsync(loadPerformance, []);
 
-  if (loading && !data) {
-    return <LoadingState label="Loading your dashboard..." />;
-  }
-
-  if (error || !data) {
-    return (
-      <div className="mx-auto max-w-3xl px-4 py-16">
-        <ErrorState message={error ?? 'Please try again.'} onRetry={reload} />
-      </div>
-    );
-  }
-
-  const featured = pickFeaturedTest(data.tests, data.now);
-  const liveTests = data.tests.filter((test) => test.kind === 'live');
-  const analytics = buildAnalytics(data.attempts, data.answers, data.stats.questions);
+  const featured = testsState.data ? pickFeaturedTest(testsState.data.tests, testsState.data.now) : undefined;
+  const liveTests = testsState.data ? testsState.data.tests.filter((test) => test.kind === 'live') : [];
+  const testsNow = testsState.data?.now ?? 0;
+  const analytics = performanceState.data
+    ? buildAnalytics(
+        performanceState.data.attempts,
+        performanceState.data.answers,
+        statsState.data?.questions ?? 0,
+      )
+    : null;
 
   return (
     <div>
-      <HeroSection stats={data.stats} ctaHref={featured ? `#/test/${featured.id}/take` : '#/practice'} />
+      <HeroSection
+        stats={statsState.data ?? EMPTY_STATS}
+        ctaHref={featured ? `#/test/${featured.id}/take` : '#/practice'}
+      />
 
-      <section className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8 lg:pt-16" aria-label="AI Study Assistant">
+      <section className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8 lg:pt-12" aria-label="AI Study Assistant">
         <Reveal>
           <AskAnythingBox />
         </Reveal>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
-        <a href="#/ai-study-assistant" className="group flex flex-col gap-4 rounded-3xl border border-violet-200 bg-gradient-to-r from-violet-50 via-white to-blue-50 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:flex-row sm:items-center sm:justify-between sm:p-7">
+      <section className="mx-auto max-w-3xl px-4 pt-6 sm:px-6">
+        <div className="rounded-3xl border border-slate-200/80 bg-white p-5 shadow-[0_10px_30px_-15px_rgba(15,23,42,0.12)] sm:p-6">
           <div className="flex items-start gap-4">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet-700 text-white"><Sparkles className="h-6 w-6" /></span>
-            <div><p className="text-xs font-extrabold uppercase tracking-[0.16em] text-violet-700">New learning workspace</p><h2 className="mt-1 text-xl font-black text-slate-900">Explore AI Study Assistant</h2><p className="mt-1 max-w-2xl text-sm leading-6 text-slate-600">Solve doubts, build study plans, generate quizzes and notes, and review your learning progress.</p></div>
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet-600 text-white shadow-md shadow-violet-600/25">
+              <Sparkles className="h-6 w-6" aria-hidden="true" />
+            </span>
+            <div>
+              <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-violet-700">New learning workspace</p>
+              <h2 className="mt-1 text-xl font-extrabold text-slate-900">Explore AI Study Assistant</h2>
+              <p className="mt-1 text-sm leading-6 text-slate-600">
+                Solve doubts, build study plans, generate quizzes and notes, and review your learning progress.
+              </p>
+            </div>
           </div>
-          <span className="inline-flex items-center justify-center rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white transition group-hover:bg-violet-800">Open AI Assistant <span className="ml-2">→</span></span>
-        </a>
+          <a
+            href="#/ai-study-assistant"
+            className="mt-5 flex w-full items-center justify-center rounded-2xl bg-slate-950 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-violet-800"
+          >
+            Open AI Assistant <span className="ml-2">→</span>
+          </a>
+        </div>
       </section>
 
-      <TrustedByMillions stats={data.stats} />
+      <StudyTodaySection />
+
+      {statsState.loading && !statsState.data ? (
+        <section className="mx-auto max-w-4xl px-4 py-12" aria-label="Loading platform stats">
+          <LoadingState label="Loading platform statistics..." />
+        </section>
+      ) : statsState.error || !statsState.data ? (
+        <section className="mx-auto max-w-3xl px-4 py-12" aria-label="Platform statistics error">
+          <ErrorState
+            title="We could not load Platform Statistics."
+            message={statsState.error ?? 'Failed to fetch platform statistics.'}
+            onRetry={statsState.reload}
+          />
+        </section>
+      ) : (
+        <TrustedByMillions stats={statsState.data} />
+      )}
 
       <ToolsShowcase />
 
@@ -89,13 +130,25 @@ export function DashboardPage() {
             Explore Practice Subjects
           </h2>
         </Reveal>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
-          {data.subjects.map((subject, index) => (
-            <Reveal key={subject.id} delay={Math.min(index, 4) * 80}>
-              <SubjectCard subject={subject} />
-            </Reveal>
-          ))}
-        </div>
+        {subjectsState.loading && !subjectsState.data ? (
+          <LoadingState label="Loading practice subjects..." />
+        ) : subjectsState.error || !subjectsState.data ? (
+          <div className="mt-5">
+            <ErrorState
+              title="We could not load Practice Subjects."
+              message={subjectsState.error ?? 'Failed to fetch practice subjects.'}
+              onRetry={subjectsState.reload}
+            />
+          </div>
+        ) : (
+          <div className="mt-5 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
+            {subjectsState.data.map((subject, index) => (
+              <Reveal key={subject.id} delay={Math.min(index, 4) * 80}>
+                <SubjectCard subject={subject} />
+              </Reveal>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="bg-white py-16 lg:py-20" aria-labelledby="live-tests-heading">
@@ -112,7 +165,17 @@ export function DashboardPage() {
               }
             />
           </Reveal>
-          {liveTests.length === 0 ? (
+          {testsState.loading && !testsState.data ? (
+            <LoadingState label="Loading live tests..." />
+          ) : testsState.error || !testsState.data ? (
+            <div className="mt-10">
+              <ErrorState
+                title="We could not load Upcoming Live Tests."
+                message={testsState.error ?? 'Failed to fetch live tests.'}
+                onRetry={testsState.reload}
+              />
+            </div>
+          ) : liveTests.length === 0 ? (
             <div className="mt-10">
               <EmptyState
                 icon={Radio}
@@ -124,7 +187,7 @@ export function DashboardPage() {
             <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {liveTests.map((test, index) => (
                 <Reveal key={test.id} delay={Math.min(index, 3) * 90}>
-                  <TestCard test={test} now={data.now} />
+                  <TestCard test={test} now={testsNow} />
                 </Reveal>
               ))}
             </div>
@@ -140,9 +203,21 @@ export function DashboardPage() {
             description="Every number here is calculated from the tests you have submitted."
           />
         </Reveal>
-        <Reveal className="mt-10">
-          <PerformanceDashboard analytics={analytics} subjects={data.subjects} />
-        </Reveal>
+        {performanceState.loading && !performanceState.data ? (
+          <LoadingState label="Loading your performance analytics..." />
+        ) : performanceState.error || !analytics ? (
+          <div className="mt-10">
+            <ErrorState
+              title="We could not load Student Performance."
+              message={performanceState.error ?? 'Failed to fetch student performance.'}
+              onRetry={performanceState.reload}
+            />
+          </div>
+        ) : (
+          <Reveal className="mt-10">
+            <PerformanceDashboard analytics={analytics} subjects={subjectsState.data ?? []} />
+          </Reveal>
+        )}
       </section>
 
       <section className="border-t border-slate-200 bg-slate-100/80 px-4 py-14 sm:px-6 lg:px-8 lg:py-16" aria-labelledby="original-hub-heading">
